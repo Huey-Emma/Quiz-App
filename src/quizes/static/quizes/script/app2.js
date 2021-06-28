@@ -81,8 +81,46 @@ function submitQuizForm() {
             result.forEach(res => {
                 const resultDiv = document.createElement('div')
                 Object.entries(res).forEach(([question, answer]) => {
-                    console.log(question, answer)
+                    // console.log(question, answer)
+                    resultDiv.innerHTML += question
+                    const cls = [
+                        'container', 'p-3', 'text-light', 'h3'
+                    ]
+                    resultDiv.classList.add(...cls)
 
+                    if (!answer.answered) {
+                        resultDiv.classList.add('bg-danger')
+                        resultDiv.innerHTML += `
+                            <span>
+                                &nbsp; Not Answered &nbsp; Correct Answer: ${answer.correct_answer}
+                            </span>
+                        `
+                    } else {
+                        console.log({answerProvided: answer.answered}, {correct_answer: answer.correct_answer})
+                        if (answer.answered === answer.correct_answer) {
+                            resultDiv.classList.add('bg-success')
+                            resultDiv.innerHTML += `
+                                <span>
+                                    &nbsp; Answered: ${answer.correct_answer}
+                                </span>
+                            `
+                        } else {
+                            resultDiv.classList.add('bg-danger')
+                            resultDiv.innerHTML += `
+                                <span>
+                                    &nbsp; Correct Answer: ${answer.correct_answer}
+                                </span>
+                            `
+
+                            resultDiv.innerHTML += `
+                                <span>
+                                    &nbsp; Your Answer: ${answer.answered}
+                                </span>
+                            `
+                        }
+                    }
+                    const body = document.querySelector('body')
+                    body.append(resultDiv)
                 })
             })
         }).catch(err => {
