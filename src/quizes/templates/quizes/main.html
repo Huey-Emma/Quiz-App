@@ -1,0 +1,52 @@
+{%extends 'base.html'%}
+{%load static%}
+
+{%block title%}
+Home
+{%endblock%}
+
+{%block script%}
+<script src="{%static 'quizes/script/app.js'%}" defer></script>
+{%endblock%}
+
+{%block content%}
+<main>
+    <!-- Modal -->
+    <div class="modal fade" id="quizStartModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Start?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="modal-body-confirm">
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn-success" id="start-button">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="h1">Quiz list</div>
+    <hr>
+    {%for quiz in quiz_list%}
+        <div>
+            <button class="btn btn-link modal-button"
+                    type="button"
+                    data-pk="{{quiz.pk}}"
+                    data-quiz="{{quiz.name}}"
+                    data-questions="{{quiz.num_of_questions}}"
+                    data-difficulty="{{quiz.difficulty}}"
+                    data-time="{{quiz.time}}"
+                    data-pass="{{quiz.pass_score}}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#quizStartModal"
+                    id="button-red"
+            >{{quiz.name}}</button>
+        </div>
+    {%endfor%}
+</main>
+<div></div>
+{%endblock%}
