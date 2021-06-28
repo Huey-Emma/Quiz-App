@@ -78,7 +78,13 @@ function submitQuizForm() {
         }).then(data => {
             const result = data.results
             quizForm.classList.add('hide')
-            console.log(result)
+            result.forEach(res => {
+                const resultDiv = document.createElement('div')
+                Object.entries(res).forEach(([question, answer]) => {
+                    console.log(question, answer)
+
+                })
+            })
         }).catch(err => {
             console.log('An error occurred sending answers')
         })

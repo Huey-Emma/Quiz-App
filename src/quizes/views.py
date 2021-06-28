@@ -1,5 +1,5 @@
 from json import loads
-from typing import Optional
+from typing import Optional, TypeVar
 from django.shortcuts import render, Http404, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
@@ -7,6 +7,8 @@ from django.views.generic import ListView
 from .models import Quiz
 from questions.models import Question, Answer
 from results.models import Result
+
+T = TypeVar('T')
 
 
 class QuizListView(ListView):
@@ -61,7 +63,7 @@ def quiz_save_view(request, pk) -> JsonResponse:
     quiz = Quiz.objects.get(pk=pk)
     score: int = 0
     multiplier: float = 100 / quiz.num_of_questions
-    results = []
+    results: list[dict[str, Optional[T]]] = []
     correct_answer: Optional[str] = None
 
     for question_ in questions:
@@ -70,11 +72,13 @@ def quiz_save_view(request, pk) -> JsonResponse:
         if selected_answer is not None:
             answers = Answer.objects.filter(question=question_)
             for answer in answers:
-                if answer.correct and answer.text == selected_answer:
-                    score += 1
-                    correct_answer = answer.text
+                if selected_answer == answer.text:
+                    if answer.correct:
+                        score += 1
+                        correct_answer = answer.text
                 else:
-                    correct_answer = answer.text
+                    if answer.correct:
+                        correct_answer = answer.text
 
             results.append({
                 question_.text: {
@@ -83,8 +87,13 @@ def quiz_save_view(request, pk) -> JsonResponse:
                 }
             })
         else:
+            correct_answer = Answer.objects.filter(question=question_).filter(correct=True)[0].text
+
             results.append({
-                question_.text: None
+                question_.text: {
+                    'correct_answer': correct_answer,
+                    'answered': None
+                }
             })
 
     score_ = score * multiplier
